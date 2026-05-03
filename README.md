@@ -4,8 +4,8 @@
 > Automate your search for investment gems using a multi-agent pipeline!
 
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat&logo=python&logoColor=white)](https://python.org)
-[![CrewAI](https://img.shields.io/badge/CrewAI-0.28-FF6B6B?style=flat)](https://crewai.com)
-[![Groq](https://img.shields.io/badge/LLM-Groq%20%7C%20LLaMA3--70B-F5820D?style=flat)](https://groq.com)
+[![CrewAI](https://img.shields.io/badge/CrewAI-latest-FF6B6B?style=flat)](https://crewai.com)
+[![Ollama](https://img.shields.io/badge/LLM-Ollama%20%7C%20LLaMA3.2-black?style=flat)](https://ollama.com)
 [![License](https://img.shields.io/badge/License-MIT-22C55E?style=flat)](LICENSE)
 
 ---
@@ -47,12 +47,14 @@ research report — in minutes, not hours.
 
 | Component | Technology |
 |-----------|-----------|
-| **Agent Framework** | [CrewAI](https://crewai.com) |
-| **LLM** | [Groq](https://groq.com) — LLaMA 3 70B (fast, free tier) |
-| **Web Search** | [Serper.dev](https://serper.dev) — Google Search API |
+| **Agent Framework** | [CrewAI](https://crewai.com) — latest |
+| **LLM** | [Ollama](https://ollama.com) — LLaMA 3.2 (local, free, no rate limits) |
+| **Web Search** | [DuckDuckGo Search](https://pypi.org/project/duckduckgo-search/) — free, no API key needed |
 | **Web Scraping** | CrewAI `ScrapeWebsiteTool` |
-| **Memory** | CrewAI short-term memory + OpenAI embeddings |
+| **LLM Router** | [LiteLLM](https://litellm.ai) — unified LLM interface |
 | **Output** | Structured Markdown investment report |
+
+> 💡 **100% free stack** — no paid API keys required. Everything runs locally on your machine.
 
 ---
 
@@ -65,31 +67,34 @@ git clone https://github.com/FatimaUPPA/stock-picker-agent.git
 cd stock-picker-agent
 ```
 
-### 2. Create a virtual environment
+### 2. Install Ollama and pull the model
 
 ```bash
-python -m venv venv
-source venv/bin/activate      # Linux/macOS
-venv\Scripts\activate.bat     # Windows
+# Install Ollama
+curl -fsSL https://ollama.com/install.sh | sh
+
+# Pull the LLaMA 3.2 model (runs locally)
+ollama pull llama3.2
+
+# Start Ollama in a separate terminal
+ollama serve
 ```
 
-### 3. Install dependencies
+> On Ubuntu, if the installer fails: `sudo apt-get install zstd -y` then re-run the install command.
+
+### 3. Create a virtual environment
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### 4. Install dependencies
 
 ```bash
 pip install -r requirements.txt
+pip install litellm
 ```
-
-### 4. Set up environment variables
-
-```bash
-cp .env.example .env
-# Edit .env and fill in your API keys
-```
-
-You'll need:
-- **GROQ_API_KEY** → free at [console.groq.com](https://console.groq.com)
-- **SERPER_API_KEY** → free tier (100 queries/mo) at [serper.dev](https://serper.dev)
-- **OPENAI_API_KEY** → for embeddings ([platform.openai.com](https://platform.openai.com)) — *optional if you disable crew memory*
 
 ### 5. Run the agent
 
@@ -99,6 +104,8 @@ python stock_picker_agent.py
 
 The report is saved as `investment_report.md` in the project root.
 
+> No `.env` file needed — this stack requires zero API keys!
+
 ---
 
 ## ⚙️ Customisation
@@ -106,7 +113,7 @@ The report is saved as `investment_report.md` in the project root.
 Edit the bottom of `stock_picker_agent.py` to target any sector or horizon:
 
 ```python
-SECTOR             = "Clean Energy"          # Change sector here
+SECTOR             = "Clean Energy"
 INVESTMENT_HORIZON = "Short-term (1–3 months)"
 ```
 
@@ -145,7 +152,7 @@ Conviction Level: High
 stock-picker-agent/
 ├── stock_picker_agent.py        # Main pipeline (agents + tasks + crew)
 ├── requirements.txt             # Python dependencies
-├── .env.example                 # Environment variables template
+├── .env.example                 # Environment variables template (optional)
 ├── investment_report_sample.md  # Example output report
 └── README.md                    # This file
 ```
@@ -157,8 +164,8 @@ stock-picker-agent/
 - **Multi-agent orchestration** — four specialised agents with distinct roles and goals
 - **Sequential task pipeline** with context passing between agents
 - **Tool use** — web search + scraping integrated into agent reasoning loops
-- **Crew memory** — short-term shared memory store across agents
 - **Dynamic task construction** — tasks parametrised at runtime (sector, horizon)
+- **Local LLM inference** — fully offline execution via Ollama
 - **Structured output** — final report written to file by the strategist agent
 
 ---
@@ -172,7 +179,7 @@ This project is part of my AI Engineering Portfolio:
 | 1 | Local RAG for Geospatial Docs | ChromaDB · Ollama · LangChain |
 | 2 | Multimodal AI Agent | Gemini · Voyage AI · MongoDB |
 | 3 | Paris Travel AI Agent | yt-dlp · DPR+FAISS · CrewAI · ElevenLabs |
-| **4** | **Stock Picker Agent** | **CrewAI · Groq · Serper** |
+| **4** | **Stock Picker Agent** | **CrewAI · Ollama · DuckDuckGo** |
 | 5 | Career Digital Twin | LangGraph · ChromaDB · Gradio |
 
 ---
@@ -192,4 +199,4 @@ Postdoctoral Researcher · AI Engineering
 [GitHub](https://github.com/FatimaUPPA) · [LinkedIn](https://linkedin.com/in/fatima-chahal)
 
 ---
-*Built with ❤️ using CrewAI · Part of the AI4MultiGIS research portfolio*
+*Built with ❤️ by Fatima Chahal — AI Engineering Portfolio*
